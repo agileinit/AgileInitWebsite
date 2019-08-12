@@ -1,6 +1,7 @@
 jQuery(document).ready(function($) {
   "use strict";
 
+	$("#MobileNo").ForceNumericOnly();
   //Contact
   $('form.contactForm').submit(function() {
     var f = $(this).find('.form-group'),
@@ -91,23 +92,20 @@ jQuery(document).ready(function($) {
     if (ferror) return false;
     else var str = $(this).serialize();
     var action = $(this).attr('action');
-    if( ! action ) {
-      action = 'contactform/contactform.php';
-    }
     $.ajax({
       type: "POST",
       url: action,
       data: str,
       success: function(msg) {
-        // alert(msg);
-        if (msg == 'OK') {
+		//console.log(msg.data);
+        if (msg.result == 'success') {
           $("#sendmessage").addClass("show");
           $("#errormessage").removeClass("show");
           $('.contactForm').find("input, textarea").val("");
         } else {
           $("#sendmessage").removeClass("show");
           $("#errormessage").addClass("show");
-          $('#errormessage').html(msg);
+          $('#errormessage').html(msg.data);
         }
 
       }
@@ -116,3 +114,28 @@ jQuery(document).ready(function($) {
   });
 
 });
+
+// Numeric only control handler
+jQuery.fn.ForceNumericOnly =
+function()
+{
+    return this.each(function()
+    {
+        $(this).keydown(function(e)
+        {
+            var key = e.charCode || e.keyCode || 0;
+            // allow backspace, tab, delete, enter, arrows, numbers and keypad numbers ONLY
+            // home, end, period, and numpad decimal
+            return (
+                key == 8 || 
+                key == 9 ||
+                key == 13 ||
+                key == 46 ||
+                key == 110 ||
+                key == 190 ||
+                (key >= 35 && key <= 40) ||
+                (key >= 48 && key <= 57) ||
+                (key >= 96 && key <= 105));
+        });
+    });
+};
